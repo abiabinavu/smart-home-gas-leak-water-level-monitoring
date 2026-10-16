@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">ESP32 smart home gas and water monitor wiring reference</title>
+  <desc id="desc">Reference wiring for a 5 V MQ-2 module through a resistor divider to ESP32 GPIO34, a float switch at GPIO27, an LED, and a transistor-driven buzzer.</desc>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+    .title { font-size: 28px; font-weight: 700; }
+    .label { font-size: 18px; font-weight: 700; }
+    .small { font-size: 15px; }
+    .tiny { font-size: 13px; }
+    .box { fill: #f5f8fc; stroke: #334155; stroke-width: 2; rx: 12; }
+    .power { stroke: #d97706; stroke-width: 4; fill: none; }
+    .signal { stroke: #2563eb; stroke-width: 3; fill: none; }
+    .ground { stroke: #475569; stroke-width: 3; fill: none; }
+    .alarm { stroke: #dc2626; stroke-width: 3; fill: none; }
+  </style>
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text x="40" y="48" class="title">Smart Home Monitor — Gas + Water Reference Wiring</text>
+  <text x="40" y="78" class="small">Assumed parts and pin choices; educational prototype only, not a certified safety alarm.</text>
+
+  <rect x="55" y="155" width="285" height="155" class="box"/>
+  <text x="78" y="190" class="label">MQ-2 module (5V)</text>
+  <text x="78" y="224" class="small">VCC → regulated 5V supply</text>
+  <text x="78" y="253" class="small">GND → common ground</text>
+  <text x="78" y="282" class="small">AO → resistor divider → GPIO34</text>
+
+  <rect x="55" y="385" width="285" height="115" class="box"/>
+  <text x="78" y="420" class="label">Normally-open float switch</text>
+  <text x="78" y="453" class="small">One wire → GPIO27</text>
+  <text x="78" y="481" class="small">Other wire → GND at alarm level</text>
+
+  <rect x="435" y="145" width="320" height="355" class="box"/>
+  <text x="460" y="185" class="label">ESP32 DevKit (classic ESP32)</text>
+  <text x="460" y="228" class="small">GPIO34 / ADC1 ← divided MQ-2 AO</text>
+  <text x="460" y="266" class="small">GPIO27 ← float switch to GND</text>
+  <text x="460" y="304" class="small">GPIO18 → 220Ω → LED → GND</text>
+  <text x="460" y="342" class="small">GPIO19 → 1kΩ → NPN base</text>
+  <text x="460" y="390" class="small">USB powers ESP32</text>
+  <text x="460" y="426" class="small">Tie ESP32 GND to 5V supply GND</text>
+  <text x="460" y="469" class="tiny">Do not apply 5V module output directly to GPIO34.</text>
+
+  <rect x="875" y="145" width="275" height="145" class="box"/>
+  <text x="900" y="180" class="label">Alarm LED</text>
+  <text x="900" y="215" class="small">GPIO18 → 220Ω → LED anode</text>
+  <text x="900" y="244" class="small">LED cathode → GND</text>
+  <text x="900" y="272" class="tiny">External LED shown; onboard LED varies by board.</text>
+
+  <rect x="875" y="340" width="275" height="160" class="box"/>
+  <text x="900" y="375" class="label">Active buzzer driver</text>
+  <text x="900" y="410" class="small">GPIO19 → 1kΩ → NPN base</text>
+  <text x="900" y="439" class="small">Emitter → GND; collector → buzzer −</text>
+  <text x="900" y="468" class="small">Buzzer + → rated supply</text>
+  <text x="900" y="491" class="tiny">Add reverse diode if buzzer is magnetic/inductive.</text>
+
+  <rect x="55" y="555" width="1095" height="95" class="box"/>
+  <text x="78" y="590" class="label">MQ-2 analog-output voltage divider</text>
+  <text x="78" y="622" class="small">Module AO → 15kΩ → ADC node (GPIO34); ADC node → 22kΩ → GND. If AO is 5V, node is about 2.97V.</text>
+  <text x="78" y="642" class="tiny">Use a regulated 5V supply for the MQ-2 module; all grounds must be common. Verify module output before connecting.</text>
+
+  <path d="M340 245 H385 V228 H435" class="signal"/>
+  <path d="M340 275 H390 V426 H435" class="ground"/>
+  <path d="M340 440 H400 V266 H435" class="signal"/>
+  <path d="M755 304 H815 V225 H875" class="signal"/>
+  <path d="M755 342 H830 V410 H875" class="signal"/>
+  <path d="M755 426 H805 V482 H875" class="ground"/>
+  <line x1="55" y1="675" x2="95" y2="675" class="signal"/>
+  <text x="105" y="680" class="tiny">sensor/control signal</text>
+  <line x1="270" y1="675" x2="310" y2="675" class="power"/>
+  <text x="320" y="680" class="tiny">regulated supply</text>
+  <line x1="470" y1="675" x2="510" y2="675" class="ground"/>
+  <text x="520" y="680" class="tiny">common ground</text>
+</svg>
