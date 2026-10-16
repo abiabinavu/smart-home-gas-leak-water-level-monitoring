@@ -26,8 +26,10 @@ void relay(uint8_t pin,bool on) {
 void setLightFromApp(bool on){lightOn=on;relay(LIGHT_RELAY,on);}
 void setAudioPowerFromApp(bool on){audioOn=on;relay(AUDIO_RELAY,on);}
 uint8_t tankBand() {
-  if(digitalRead(HIGH_FLOAT)==LOW) return 2;
-  if(digitalRead(MID_FLOAT)==LOW) return 1;
+  // Returns 0=below low marker, 1=low, 2=middle, 3=high.
+  if(digitalRead(HIGH_FLOAT)==LOW) return 3;
+  if(digitalRead(MID_FLOAT)==LOW) return 2;
+  if(digitalRead(LOW_FLOAT)==LOW) return 1;
   return 0;
 }
 void receiveAppCommands() {
