@@ -1,4 +1,4 @@
-# ESP32 Smart Home Gas and Tank-Level Monitor
+# ESP32 Smart Home Gas and Water Tank Level Monitoring System — Parent Safety Alert
 
 This project monitors gas and household tank water level, updates a mobile app, and supports app commands to switch a light and an audio appliance on or off.
 
