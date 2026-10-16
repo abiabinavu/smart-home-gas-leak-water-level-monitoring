@@ -1,71 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
-  <title id="title">ESP32 smart home gas and water monitor wiring reference</title>
-  <desc id="desc">Reference wiring for a 5 V MQ-2 module through a resistor divider to ESP32 GPIO34, a float switch at GPIO27, an LED, and a transistor-driven buzzer.</desc>
-  <style>
-    text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
-    .title { font-size: 28px; font-weight: 700; }
-    .label { font-size: 18px; font-weight: 700; }
-    .small { font-size: 15px; }
-    .tiny { font-size: 13px; }
-    .box { fill: #f5f8fc; stroke: #334155; stroke-width: 2; rx: 12; }
-    .power { stroke: #d97706; stroke-width: 4; fill: none; }
-    .signal { stroke: #2563eb; stroke-width: 3; fill: none; }
-    .ground { stroke: #475569; stroke-width: 3; fill: none; }
-    .alarm { stroke: #dc2626; stroke-width: 3; fill: none; }
-  </style>
-  <rect width="1200" height="700" fill="#ffffff"/>
-  <text x="40" y="48" class="title">Smart Home Monitor — Gas + Water Reference Wiring</text>
-  <text x="40" y="78" class="small">Assumed parts and pin choices; educational prototype only, not a certified safety alarm.</text>
-
-  <rect x="55" y="155" width="285" height="155" class="box"/>
-  <text x="78" y="190" class="label">MQ-2 module (5V)</text>
-  <text x="78" y="224" class="small">VCC → regulated 5V supply</text>
-  <text x="78" y="253" class="small">GND → common ground</text>
-  <text x="78" y="282" class="small">AO → resistor divider → GPIO34</text>
-
-  <rect x="55" y="385" width="285" height="115" class="box"/>
-  <text x="78" y="420" class="label">Normally-open float switch</text>
-  <text x="78" y="453" class="small">One wire → GPIO27</text>
-  <text x="78" y="481" class="small">Other wire → GND at alarm level</text>
-
-  <rect x="435" y="145" width="320" height="355" class="box"/>
-  <text x="460" y="185" class="label">ESP32 DevKit (classic ESP32)</text>
-  <text x="460" y="228" class="small">GPIO34 / ADC1 ← divided MQ-2 AO</text>
-  <text x="460" y="266" class="small">GPIO27 ← float switch to GND</text>
-  <text x="460" y="304" class="small">GPIO18 → 220Ω → LED → GND</text>
-  <text x="460" y="342" class="small">GPIO19 → 1kΩ → NPN base</text>
-  <text x="460" y="390" class="small">USB powers ESP32</text>
-  <text x="460" y="426" class="small">Tie ESP32 GND to 5V supply GND</text>
-  <text x="460" y="469" class="tiny">Do not apply 5V module output directly to GPIO34.</text>
-
-  <rect x="875" y="145" width="275" height="145" class="box"/>
-  <text x="900" y="180" class="label">Alarm LED</text>
-  <text x="900" y="215" class="small">GPIO18 → 220Ω → LED anode</text>
-  <text x="900" y="244" class="small">LED cathode → GND</text>
-  <text x="900" y="272" class="tiny">External LED shown; onboard LED varies by board.</text>
-
-  <rect x="875" y="340" width="275" height="160" class="box"/>
-  <text x="900" y="375" class="label">Active buzzer driver</text>
-  <text x="900" y="410" class="small">GPIO19 → 1kΩ → NPN base</text>
-  <text x="900" y="439" class="small">Emitter → GND; collector → buzzer −</text>
-  <text x="900" y="468" class="small">Buzzer + → rated supply</text>
-  <text x="900" y="491" class="tiny">Add reverse diode if buzzer is magnetic/inductive.</text>
-
-  <rect x="55" y="555" width="1095" height="95" class="box"/>
-  <text x="78" y="590" class="label">MQ-2 analog-output voltage divider</text>
-  <text x="78" y="622" class="small">Module AO → 15kΩ → ADC node (GPIO34); ADC node → 22kΩ → GND. If AO is 5V, node is about 2.97V.</text>
-  <text x="78" y="642" class="tiny">Use a regulated 5V supply for the MQ-2 module; all grounds must be common. Verify module output before connecting.</text>
-
-  <path d="M340 245 H385 V228 H435" class="signal"/>
-  <path d="M340 275 H390 V426 H435" class="ground"/>
-  <path d="M340 440 H400 V266 H435" class="signal"/>
-  <path d="M755 304 H815 V225 H875" class="signal"/>
-  <path d="M755 342 H830 V410 H875" class="signal"/>
-  <path d="M755 426 H805 V482 H875" class="ground"/>
-  <line x1="55" y1="675" x2="95" y2="675" class="signal"/>
-  <text x="105" y="680" class="tiny">sensor/control signal</text>
-  <line x1="270" y1="675" x2="310" y2="675" class="power"/>
-  <text x="320" y="680" class="tiny">regulated supply</text>
-  <line x1="470" y1="675" x2="510" y2="675" class="ground"/>
-  <text x="520" y="680" class="tiny">common ground</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1450" height="850" viewBox="0 0 1450 850" role="img" aria-labelledby="t d"><title id="t">ESP32 smart-home gas, tank level and appliance-control reference circuit</title><desc id="d">Suggested low-voltage wiring for MQ-2 gas module, three tank float switches, mobile-app network architecture and isolated relay controls for light and audio equipment.</desc><style>text{font-family:Arial,sans-serif;fill:#172033}.title{font-size:30px;font-weight:bold}.label{font-size:20px;font-weight:bold}.s{font-size:16px}.t{font-size:14px}.b{fill:#f5f8fc;stroke:#334155;stroke-width:2;rx:14}.sig{stroke:#2563eb;stroke-width:3;fill:none}.sens{stroke:#059669;stroke-width:3;fill:none}.rel{stroke:#7c3aed;stroke-width:3;fill:none}.net{stroke:#0891b2;stroke-width:3;stroke-dasharray:9 7;fill:none}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:2;rx:12}</style><rect width="1450" height="850" fill="white"/><text x="40" y="50" class="title">Smart Home Monitor — Gas + Tank Level + App Control</text><text x="40" y="82" class="s">Suggested low-voltage reference only; not a household mains-wiring plan.</text>
+<rect x="465" y="245" width="455" height="365" class="b"/><text x="500" y="285" class="label">ESP32 DevKit (classic)</text><text x="500" y="328" class="s">GPIO34 ADC ← divided MQ-2 AO</text><text x="500" y="366" class="s">GPIO26 / 27 / 14 ← low / mid / high floats</text><text x="500" y="407" class="s">GPIO18 / 19 → relay inputs 1 / 2</text><text x="500" y="452" class="s">Wi-Fi ↔ mobile app/backend</text><text x="500" y="505" class="s">USB power; sensors use rated supply</text><text x="500" y="555" class="t">Common low-voltage ground where required.</text>
+<rect x="45" y="140" width="340" height="175" class="b"/><text x="70" y="180" class="label">MQ-2 gas module</text><text x="70" y="218" class="s">VCC regulated 5V; GND common</text><text x="70" y="256" class="s">AO → 15kΩ → GPIO34 node</text><text x="70" y="294" class="s">GPIO34 node → 22kΩ → GND</text>
+<rect x="45" y="365" width="340" height="205" class="b"/><text x="70" y="405" class="label">Tank float switches</text><text x="70" y="443" class="s">LOW → GPIO26 to GND</text><text x="70" y="481" class="s">MID → GPIO27 to GND</text><text x="70" y="519" class="s">HIGH → GPIO14 to GND</text><text x="70" y="550" class="t">Discrete levels; check switch polarity.</text>
+<rect x="1050" y="140" width="345" height="185" class="b"/><text x="1075" y="180" class="label">Mobile app / backend</text><text x="1075" y="218" class="s">Receives gas + tank status</text><text x="1075" y="256" class="s">Sends light/audio on-off commands</text><text x="1075" y="294" class="t">Platform/protocol depend on actual build.</text>
+<rect x="1050" y="375" width="345" height="175" class="b"/><text x="1075" y="415" class="label">Two-channel isolated relay</text><text x="1075" y="453" class="s">IN1 GPIO18 → light command</text><text x="1075" y="491" class="s">IN2 GPIO19 → audio power command</text><text x="1075" y="529" class="t">Check board/load ratings and isolation.</text>
+<rect x="1050" y="600" width="345" height="125" class="warn"/><text x="1075" y="640" class="label">Home appliances</text><text x="1075" y="678" class="s">Light / audio power on-off only</text><text x="1075" y="706" class="t">Mains installation by electrician only.</text>
+<rect x="45" y="645" width="875" height="125" class="b"/><text x="70" y="685" class="label">Gas sensor and safety</text><text x="70" y="723" class="s">15kΩ / 22kΩ scales a 5V analog output to about 2.97V.</text><text x="70" y="756" class="t">Raw ADC is not ppm; this prototype is not a certified gas alarm.</text>
+<path d="M385 235H425V328H465M385 465H435V366H465M920 452H980V240H1050M1050 275H990V452H920M920 407H980V455H1050M1220 550V600" class="net"/>
+<line x1="45" y1="815" x2="85" y2="815" class="sens"/><text x="95" y="820" class="t">sensor</text><line x1="180" y1="815" x2="220" y2="815" class="rel"/><text x="230" y="820" class="t">relay control</text><line x1="350" y1="815" x2="390" y2="815" class="net"/><text x="400" y="820" class="t">Wi-Fi/app connection</text><text x="850" y="820" class="t">Keep AC mains isolated from low-voltage ESP32 circuit.</text></svg>
