@@ -1,75 +1,62 @@
 /*
- * Smart Home Gas/Water Monitor — educational reference firmware
+ * Smart home monitoring reference scaffold.
+ * Assumes classic ESP32, MQ-2 analog module, three float switches, and a
+ * two-channel isolated relay-input module. App/cloud adapter is a TODO
+ * because the actual platform was not specified. Generated, unverified code.
  *
- * Assumed hardware: classic ESP32 DevKit, 5 V MQ-2 module with AO output,
- * normally-open float switch, LED, and an active buzzer driven by an NPN
- * transistor. This is generated example code, not verified against your build.
- *
- * SAFETY: This prototype is not a certified gas alarm. Never rely on it for
- * life safety or property protection. Use a certified gas detector. Do not
- * release flammable gas to test the sensor.
+ * Not a certified gas alarm. Do not wire household mains from this example;
+ * a qualified electrician must install/check mains-rated relay wiring.
  */
-
 #include <Arduino.h>
+constexpr uint8_t GAS=34, LOW_FLOAT=26, MID_FLOAT=27, HIGH_FLOAT=14;
+constexpr uint8_t LIGHT_RELAY=18, AUDIO_RELAY=19;
+constexpr int GAS_THRESHOLD_RAW=2200; // Placeholder raw ADC, not ppm.
+constexpr bool RELAY_ACTIVE_LOW=true;
+uint32_t lastReport=0;
+bool lightOn=false, audioOn=false;
 
-constexpr uint8_t PIN_GAS_ADC = 34;       // ADC1 input on classic ESP32.
-constexpr uint8_t PIN_WATER_SWITCH = 27; // Switch closes to GND at alert level.
-constexpr uint8_t PIN_ALARM_LED = 18;
-constexpr uint8_t PIN_BUZZER_DRIVER = 19;
-
-// PLACEHOLDER ONLY: tune using the exact sensor module and a controlled setup.
-// This is a raw ADC value, not a calibrated gas concentration in ppm.
-constexpr int GAS_THRESHOLD_RAW = 2200;
-constexpr uint8_t GAS_SAMPLES = 24;
-constexpr uint32_t REPORT_INTERVAL_MS = 1000;
-
-uint32_t lastReportMs = 0;
-
-int readGasAverage() {
-  uint32_t total = 0;
-  for (uint8_t i = 0; i < GAS_SAMPLES; ++i) {
-    total += analogRead(PIN_GAS_ADC);
-    delay(5);
-  }
-  return static_cast<int>(total / GAS_SAMPLES);
+int gasAverage() {
+  uint32_t sum=0;
+  for(uint8_t i=0;i<24;i++){sum+=analogRead(GAS);delay(5);}
+  return sum/24;
 }
-
+void relay(uint8_t pin,bool on) {
+  digitalWrite(pin, RELAY_ACTIVE_LOW ? (on?LOW:HIGH) : (on?HIGH:LOW));
+}
+void setLightFromApp(bool on){lightOn=on;relay(LIGHT_RELAY,on);}
+void setAudioPowerFromApp(bool on){audioOn=on;relay(AUDIO_RELAY,on);}
+uint8_t tankBand() {
+  if(digitalRead(HIGH_FLOAT)==LOW) return 2;
+  if(digitalRead(MID_FLOAT)==LOW) return 1;
+  return 0;
+}
+void receiveAppCommands() {
+  // TODO connect authenticated commands from the actual app/backend.
+  // Validate commands and define behavior when the network is unavailable.
+}
+void publishStatus(int raw,bool alert,uint8_t level) {
+  // TODO publish using the actual app/cloud protocol; keep credentials private.
+  Serial.printf("APP STATUS raw=%d gas=%s tank=%u light=%s audio=%s\n",
+    raw,alert?"ALERT":"clear",level,lightOn?"on":"off",audioOn?"on":"off");
+}
 void setup() {
   Serial.begin(115200);
-
-  pinMode(PIN_WATER_SWITCH, INPUT_PULLUP);
-  pinMode(PIN_ALARM_LED, OUTPUT);
-  pinMode(PIN_BUZZER_DRIVER, OUTPUT);
-
-  digitalWrite(PIN_ALARM_LED, LOW);
-  digitalWrite(PIN_BUZZER_DRIVER, LOW);
-
+  pinMode(LOW_FLOAT,INPUT_PULLUP);
+  pinMode(MID_FLOAT,INPUT_PULLUP);
+  pinMode(HIGH_FLOAT,INPUT_PULLUP);
+  pinMode(LIGHT_RELAY,OUTPUT);
+  pinMode(AUDIO_RELAY,OUTPUT);
+  relay(LIGHT_RELAY,false); relay(AUDIO_RELAY,false);
   analogReadResolution(12);
-  analogSetPinAttenuation(PIN_GAS_ADC, ADC_11db);
-
-  Serial.println("Smart Home Monitor reference firmware");
-  Serial.println("MQ-2 output is qualitative raw ADC only; calibrate threshold.");
-  Serial.println("Water switch should close to GND at the selected alert level.");
+  analogSetPinAttenuation(GAS,ADC_11db);
 }
-
 void loop() {
-  const int gasRaw = readGasAverage();
-  const bool gasAlarm = gasRaw >= GAS_THRESHOLD_RAW;
-  const bool waterAlarm = digitalRead(PIN_WATER_SWITCH) == LOW;
-  const bool alarm = gasAlarm || waterAlarm;
-
-  digitalWrite(PIN_ALARM_LED, alarm ? HIGH : LOW);
-  digitalWrite(PIN_BUZZER_DRIVER, alarm ? HIGH : LOW);
-
-  if (millis() - lastReportMs >= REPORT_INTERVAL_MS) {
-    lastReportMs = millis();
-    Serial.printf(
-      "MQ-2 raw=%d threshold=%d gas=%s water=%s alarm=%s\n",
-      gasRaw,
-      GAS_THRESHOLD_RAW,
-      gasAlarm ? "ALERT" : "clear",
-      waterAlarm ? "ALERT" : "clear",
-      alarm ? "ON" : "off"
-    );
+  receiveAppCommands();
+  int raw=gasAverage();
+  bool gasAlert=raw>=GAS_THRESHOLD_RAW;
+  uint8_t level=tankBand();
+  if(millis()-lastReport>=2000) {
+    lastReport=millis();
+    publishStatus(raw,gasAlert,level);
   }
 }
